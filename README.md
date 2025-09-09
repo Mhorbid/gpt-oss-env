@@ -39,7 +39,7 @@ start http://localhost:8080
 ## 📁 Project Layout
 
 ```text
-├── docker-compose.yml          # Main compose file
+├── docker-compose.yaml
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
 │   └── PULL_REQUEST_TEMPLATE/
