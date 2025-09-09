@@ -1,0 +1,71 @@
+services:
+    webui:
+        image: ghcr.io/open-webui/open-webui:cuda
+        container_name: OpenWeb-UI
+        volumes:
+            - webui_data:/app/backend/data
+        ports:
+            - "8080:8080"
+        ipc: host
+        networks:
+            ai-net:
+                ipv4_address: 10.0.0.2
+        depends_on:
+            - vllm
+            - sql
+        environment:
+            DATABASE_URL: postgresql://postgres:1234@10.0.0.4/postgres
+            VECTOR_DB: pgvector
+            DEFAULT_MODELS: openai/gpt-oss-20b
+            OPENAI_API_BASE_URL: http://10.0.0.3:8000/v1
+            OPENAI_API_KEY: "1234"
+        restart: unless-stopped
+    vllm:
+        image: vllm/vllm-openai:latest
+        container_name: vLLM
+        volumes:
+            - vllm_data:/root/.cache
+        command: ["--model", "openai/gpt-oss-20b", "--gpu-memory-utilization", "0.9", "--api-key", "1234"]
+        ports:
+            - "8000:8000"
+        # ipc: host
+        networks:
+            ai-net:
+                ipv4_address: 10.0.0.3
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all
+                          capabilities: [gpu]
+        restart: unless-stopped
+    sql:
+        image: pgvector/pgvector:pg17
+        container_name: PostgreSQL
+        volumes:
+            - ai_database:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        # ipc: host
+        networks:
+            ai-net:
+                ipv4_address: 10.0.0.4
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: "1234"
+            PGDATA: /var/lib/postgresql/data/pgdata
+        restart: unless-stopped
+
+volumes:
+    webui_data: {}
+    vllm_data: {}
+    ai_database: {}
+
+networks:
+    ai-net:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 10.0.0.0/29
