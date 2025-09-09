@@ -21,6 +21,7 @@ docker compose up -d
 # Open the UI when the download is done
 start http://localhost:8080
 # Use any email to register an admin account
+# It doesn't matter, it's a local account
 
 # Stop the stack
 # docker compose down
