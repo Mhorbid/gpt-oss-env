@@ -18,8 +18,9 @@ docker compose up -d
 # This will take a while...
 # vLLM has to download the model!
 
-# Open the UI
+# Open the UI when the download is done
 start http://localhost:8080
+# Use any email to register an admin account
 
 # Stop the stack
 # docker compose down
@@ -53,7 +54,7 @@ All heavy lifting is done inside `docker‑compose.yml`; no build steps are requ
 
 | Service   | Image                                            | Ports | Purpose |
 |-----------|--------------------------------------------------|-------|-------|
-| `vllm`    | `vllm/vllm-openai:latest               `         | 8000  | Fast inference engine powered by NVIDIA’s LLM framework |
+| `vllm`    | `vllm/vllm-openai:latest`         | 8000  | Fast inference engine powered by NVIDIA’s LLM framework |
 | `openwebui` | `ghcr.io/open-webui/open-webui:cuda`           | 8080  | Browser‑friendly UI for chatting, API calls, and metrics |
 | `postgres` | `pgvector/pgvector:pg17`                        | 5432  | Persistent data store for OpenWeb UI (conversation history, users, etc.) |
 
